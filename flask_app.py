@@ -1,6 +1,28 @@
 from flask import Flask, request, url_for, render_template, redirect
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config["DEBUG"] = True
+
+databasename = "fla_app"
+dialect = "MySQL"
+name = "Flask_App_DB"
+password = "BUSDEVGjtx$mGn3@6L79"
+port = 3306
+hostname = "localhost"
+username = "newuser"
+
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}:3306/{databasename}".format(
+    username="the username from the 'Databases' tab",
+    password="the password you set on the 'Databases' tab",
+    hostname="the database host address from the 'Databases' tab",
+    databasename="the database name you chose, probably yourusername$comments",
+)
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db = SQLAlchemy(app)
 
 comments=[]
 
@@ -38,6 +60,5 @@ if __name__ == '__main__':
     with app.test_request_context():
         print(url_for('login'))
         print(url_for('login', next='/'))
-        print(url_for('profile', username='John Doe'))
-    app.config["DEBUG"] = True
+        print(url_for('profile', username='John Doe'))   
     app.run(debug=True) 
