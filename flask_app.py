@@ -12,7 +12,7 @@ port = 3306
 hostname = "localhost"
 username = "newuser"
 
-SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}:3306/{databasename}".format(
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://newuser:BUSDEVGjtx$mGn3@6L79@127.0.0.1:3306/fla_app".format(
     username="the username from the 'Databases' tab",
     password="the password you set on the 'Databases' tab",
     hostname="the database host address from the 'Databases' tab",
@@ -23,6 +23,11 @@ app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
+
+class Comment(db.Model):
+    __tablename__ = "comments"
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(4096))
 
 comments=[]
 
