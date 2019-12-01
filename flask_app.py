@@ -1,5 +1,7 @@
 from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import login_user, LoginManager, UserMixin
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -24,6 +26,33 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
+app.secret_key = "something_only_you_know"
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+class User(UserMixin):
+
+    def __init__(self, username, password_hash):
+        self.username = username
+        self.password_hash = password_hash
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    def get_id(self):
+        return self.username
+
+
+all_users = {
+    "admin": User("admin", generate_password_hash("secret")),
+    "bob": User("bob", generate_password_hash("less-secret")),
+    "caroline": User("caroline", generate_password_hash("completely-secret")),
+}
+
+@login_manager.user_loader
+def load_user(user_id):
+    return all_users.get(user_id)
+
 class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
@@ -47,23 +76,17 @@ def login():
     if request.method == "GET":
         return render_template("login_page.html", error=False)
 
-    if request.form["username"] != "admin" or request.form["password"] != "secret":
+    username = request.form["username"]
+    if username not in all_users:
+        return render_template("login_page.html", error=True)
+    user = all_users[username]
+
+    if not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
 
+    login_user(user) # flask_login function
+
     return redirect(url_for('index'))
-
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     if request.method == 'POST':
-#         do_the_login()
-#     else:
-#         show_the_login_form()
-
-def do_the_login():
-    pass 
-
-def show_the_login_form():
-    pass 
 
 @app.route('/wibble')
 def wibble():
