@@ -1,11 +1,14 @@
 from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, LoginManager, UserMixin, logout_user, login_required, current_user
+from flask_migrate import Migrate
 from werkzeug.security import check_password_hash, generate_password_hash
+from datetime import datetime
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
+# Database connection variables (need to use in connection string)
 databasename = "fla_app"
 dialect = "MySQL"
 name = "Flask_App_DB"
@@ -14,6 +17,7 @@ port = 3306
 hostname = "localhost"
 username = "newuser"
 
+# Database connection (hardcoded becasue doesn't worked good as variables)
 SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://newuser:BUSDEVGjtx$mGn3@6L79@127.0.0.1:3306/fla_app".format(
     username="the username from the 'Databases' tab",
     password="the password you set on the 'Databases' tab",
@@ -24,8 +28,12 @@ app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
+# Database stuff: app created, app migrated if required
 db = SQLAlchemy(app)
 
+migrate = Migrate(app, db)
+
+# Login stuff
 app.secret_key = "something_only_you_know"
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -53,6 +61,7 @@ all_users = {
 def load_user(user_id):
     return all_users.get(user_id)
 
+# Comments stuff
 class Comment(db.Model):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
@@ -60,11 +69,12 @@ class Comment(db.Model):
 
 comments=[]
 
+# Routing (endpoints)
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        return render_template("main_page.html", comments=Comment.query.all())
+        return render_template("main_page.html", comments=Comment.query.all(), timestamp=datetime.now())
     
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -97,6 +107,7 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
+# Not used pages
 @app.route('/wibble')
 def wibble():
     return 'This is my pointless new page'
