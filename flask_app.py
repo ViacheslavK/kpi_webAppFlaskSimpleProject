@@ -42,12 +42,22 @@ def index():
     db.session.commit()
     return redirect(url_for("index"))
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login/", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        do_the_login()
-    else:
-        show_the_login_form()
+    if request.method == "GET":
+        return render_template("login_page.html", error=False)
+
+    if request.form["username"] != "admin" or request.form["password"] != "secret":
+        return render_template("login_page.html", error=True)
+
+    return redirect(url_for('index'))
+
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         do_the_login()
+#     else:
+#         show_the_login_form()
 
 def do_the_login():
     pass 
