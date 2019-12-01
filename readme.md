@@ -24,3 +24,4 @@ Web-tutorials, used for create it:
 List of packages in use:
 1. https://flask-login.readthedocs.io/en/latest/
 2. https://docs.python.org/3/library/time.html#time.strftime (Date-Time format)
+
