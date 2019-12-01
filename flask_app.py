@@ -1,10 +1,10 @@
-from flask import Flask, request, url_for
+from flask import Flask, request, url_for, render_template
 
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
-    return 'Hello World!'
+def index():
+    return render_template("main_page.html")
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -18,6 +18,10 @@ def do_the_login():
 
 def show_the_login_form():
     pass 
+
+@app.route('/wibble')
+def wibble():
+    return 'This is my pointless new page'
 
 @app.route('/user/<username>')
 def profile(username): 

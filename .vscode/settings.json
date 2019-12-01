@@ -1,3 +1,14 @@
 {
-    "python.pythonPath": "libs\\Scripts\\python.exe"
+    "python.pythonPath": "libs\\Scripts\\python.exe",
+    "sqltools.connections": [
+        {
+            "database": "fla_app",
+            "dialect": "MySQL",
+            "name": "Flask_App_DB",
+            "password": "BUSDEVGjtx$mGn3@6L79",
+            "port": 3306,
+            "server": "localhost",
+            "username": "newuser"
+        }
+    ]
 }
