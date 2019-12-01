@@ -8,10 +8,14 @@ Now, we want to create the tables. This is really easy:
 
 Preparation of migrations for DB (to do inside virtual env)
 
-```
-    export FLASK_APP=flask_app.py
-    flask db init
-```
+```export FLASK_APP=flask_app.py```
+```flask db init```
+
+and then
+```flask db migrate```
+
+stamping of current state
+```flask db stamp head```
 
 Web-tutorials, used for create it:
 1. https://blog.pythonanywhere.com/121/
