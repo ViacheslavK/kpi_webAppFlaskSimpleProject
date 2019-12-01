@@ -38,6 +38,7 @@ app.secret_key = "something_only_you_know"
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 class User(UserMixin, db.Model):
 
     __tablename__ = "users"
@@ -57,6 +58,7 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.filter_by(username=user_id).first()
 
+
 # Comments stuff
 class Comment(db.Model):
     __tablename__ = "comments"
@@ -66,7 +68,8 @@ class Comment(db.Model):
     commenter_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     commenter = db.relationship('User', foreign_keys=commenter_id)
 
-comments=[]
+
+comments = []
 
 # Routing (endpoints)
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
@@ -82,6 +85,7 @@ def index():
     db.session.add(comment)
     db.session.commit()
     return redirect(url_for("index"))
+
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
@@ -99,8 +103,10 @@ def login():
 
     return redirect(url_for('index'))
 
+
 @app.route("/logout/")
-@login_required  # This is provided by Flask-Login and allows you to protect views so that they can only be accessed by logged-in users
+@login_required
+# This is provided by Flask-Login and allows you to protect views so that they can only be accessed by logged-in users
 def logout():
     logout_user()
     return redirect(url_for('index'))
@@ -110,13 +116,15 @@ def logout():
 def wibble():
     return 'This is my pointless new page'
 
+
 @app.route('/user/<username>')
 def profile(username): 
     pass
+
 
 if __name__ == '__main__':
     with app.test_request_context():
         print(url_for('login'))
         print(url_for('login', next='/'))
         print(url_for('profile', username='John Doe'))   
-    app.run(debug=True) 
+    app.run(debug=True)
