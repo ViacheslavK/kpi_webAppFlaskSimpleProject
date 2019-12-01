@@ -1,6 +1,6 @@
 from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_user, LoginManager, UserMixin
+from flask_login import login_user, LoginManager, UserMixin, logout_user, login_required
 from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
@@ -86,6 +86,12 @@ def login():
 
     login_user(user) # flask_login function
 
+    return redirect(url_for('index'))
+
+@app.route("/logout/")
+@login_required  # This is provided by Flask-Login and allows you to protect views so that they can only be accessed by logged-in users
+def logout():
+    logout_user()
     return redirect(url_for('index'))
 
 @app.route('/wibble')
