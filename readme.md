@@ -5,3 +5,7 @@ Once it's running, you need to import the database manager from your code:
 Now, we want to create the tables. This is really easy:
 
 ``` db.create_all()```
+
+Web-tutorials, used for create it:
+1. https://blog.pythonanywhere.com/121/
+2. https://blog.pythonanywhere.com/158/
