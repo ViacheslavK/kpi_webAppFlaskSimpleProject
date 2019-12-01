@@ -9,3 +9,6 @@ Now, we want to create the tables. This is really easy:
 Web-tutorials, used for create it:
 1. https://blog.pythonanywhere.com/121/
 2. https://blog.pythonanywhere.com/158/
+
+List of packages in use:
+1. https://flask-login.readthedocs.io/en/latest/
