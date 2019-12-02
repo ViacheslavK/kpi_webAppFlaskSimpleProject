@@ -23,6 +23,8 @@ Web-tutorials, used for create it:
 3. https://blog.miguelgrinberg.com/post/setting-up-a-flask-application-in-visual-studio-code (setup tips for project env)
 3.1. https://www.youtube.com/watch?v=UXqiVe6h3lA (video from the same author for VC)
 3.2. https://www.youtube.com/watch?v=bZUokrYanFM (video from the same author for PyCharm)
+4. https://flask.palletsprojects.com/en/1.1.x/tutorial/ (official tutorial)
+5. https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world (and next chapters)
 
 List of packages in use:
 1. https://palletsprojects.com/p/flask/ (Flask documentation itself)
