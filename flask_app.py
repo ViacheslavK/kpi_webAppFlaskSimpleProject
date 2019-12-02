@@ -2,7 +2,7 @@ from flask import Flask, request, url_for, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, LoginManager, UserMixin, logout_user, login_required, current_user
 from flask_migrate import Migrate
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 
 app = Flask(__name__)
@@ -107,7 +107,7 @@ class CompanyRating(db.Model):
 
 # Company profile
 class CompanyJob(db.Model):
-    __tablename__ = "company_ratings"
+    __tablename__ = "company_jobs"
     id = db.Column(db.Integer, primary_key=True)
     job_title = db.Column(db.String(128))
     job_description = db.Column(db.String(4096))
@@ -123,7 +123,7 @@ class CompanyJob(db.Model):
 def index():
     if request.method == "GET":
         # return render_template("main_page.html", comments=Comment.query.all())
-        return render_template("main_page.html")
+        return render_template("index.html")
     
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -151,6 +151,65 @@ def login():
     return redirect(url_for('index'))
 
 
+@app.route("/register/", methods=["GET", "POST"])
+def register_user():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    if request.method == "GET":
+        return render_template("register.html", error='')
+
+    password = request.form['password']
+    password_repeat = request.form['password_repeat']
+    user_email = request.form["email"]
+    new_username = request.form["username"]
+
+    registered_emails = User.query.filter(User.user_email==user_email)
+
+    if password != password_repeat:
+        return render_template("register.html", error='password')
+
+    if load_user(new_username) is not None:
+        return render_template("register.html", error='already_registered_name')
+
+    if registered_emails.count()>0:
+        return render_template("register.html", error='already_registered_email')
+
+    user = User(username=request.form["username"],
+                users_firstname = request.form["first_name"],
+                users_lastname = request.form["last_name"],
+                user_email=request.form["email"],
+                password_hash=generate_password_hash(request.form["password"]),
+                permission="commenter")
+    db.session.add(user)
+    db.session.commit()
+    login_user(user)
+    return redirect(url_for('index'))
+
+@app.route("/jobs/", methods=["GET", "POST"])
+def jobs_listing():
+    pass
+
+@app.route("/companies/", methods=["GET", "POST"])
+def dev_companies():
+    pass
+
+@app.route("/blog/", methods=["GET", "POST"])
+def blog_post():
+    pass
+
+@app.route("/blog/<blog_id>", methods=["GET", "POST"])
+def blog_posting():
+    pass
+
+@app.route('/user/<user_id>', methods=["GET", "POST"])
+def profile(user_id):
+    pass
+
+@app.route("/users/", methods=["GET", "POST"])
+def get_users_list():
+    pass
+
 @app.route("/logout/")
 @login_required
 # This is provided by Flask-Login and allows you to protect views so that they can only be accessed by logged-in users
@@ -162,31 +221,7 @@ if __name__ == '__main__':
     with app.test_request_context():
         print(url_for('login'))
         print(url_for('login', next='/'))
-        print(url_for('profile', username='John Doe'))   
+        print(url_for('profile', user_id='John Doe'))   
     app.run(debug=True)
     # Alt. runner properly for Code, where there is no need to use the in-browser debugger or the reloader
     # app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
-
-@app.route("/register/", methods=["GET", "POST"])
-def register_user():
-    pass
-
-@app.route("/jobs/", methods=["GET", "POST"])
-def jobs_listing():
-    pass
-
-@app.route("/blog/", methods=["GET", "POST"])
-def blog_feed():
-    pass
-
-@app.route("/blog/<blog_id>", methods=["GET", "POST"])
-def blog_posting():
-    pass
-
-@app.route("/profile/<user_id>", methods=["GET", "POST"])
-def view_profile():
-    pass
-
-@app.route("/users/", methods=["GET", "POST"])
-def get_users_list():
-    pass

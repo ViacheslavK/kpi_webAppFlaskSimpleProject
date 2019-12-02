@@ -4,7 +4,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
-        <title>My scratchboard page</title>
+        <title>Scandinavian GameDev</title>
     </head>
 
     <body>
@@ -17,42 +17,29 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">My scratchpad</a>
+                    <a class="navbar-brand" href="{{ url_for('index') }}">Scandinavian GameDev{% block title %}{% endblock %}</a>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
-                        {% if current_user.is_authenticated %}
-                            <li><a href="{{ url_for('logout') }}">Log out</a></li>
-                        {% else %}
-                            <li><a href="{{ url_for('login') }}">Log in</a></li>
-                        {% endif %}
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('blog_post') }}">Post News</a></li>
+                    {% endif %}
+                    <li><a href="{{ url_for('dev_companies') }}">Companies</a></li>
+                    <li><a href="{{ url_for('jobs_listing') }}">Jobs</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('logout') }}">Log out</a></li>
+                    {% else %}
+                        <li><a href="{{ url_for('register_user') }}">Register</a></li>
+                        <li><a href="{{ url_for('login') }}">Log in</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>
-            
+
+        <section class="content">
+            {% block content %}{% endblock %}
+        </section>
             
         <div class="container">
-            {% for comment in comments %}
-                <div class="row" style="margin-bottom: 1ex">
-                    {{ comment.content }}
-                </div>
-                <div>
-                    <small>
-                        Posted
-                        {% if comment.posted %}
-                            {{ comment.posted.strftime("%A, %d %B %Y at %H:%M") }}
-                        {% else %}
-                            at an unknown time
-                        {% endif %}
-                        by
-                        {% if comment.commenter %}
-                            {{ comment.commenter.username }}
-                        {% else %}
-                            anonymous
-                        {% endif %}
-                    </small>
-                </div>
-            {% endfor %}
-
             {% if current_user.is_authenticated %}
                 <div class="row">
                     <form action="." method="POST">
@@ -61,6 +48,6 @@
                     </form>
                 </div>
             {% endif %}
-        </div><!-- /.container -->
+        </div>
     </body>
 </html>

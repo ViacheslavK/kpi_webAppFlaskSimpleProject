@@ -15,8 +15,9 @@ Preparation of migrations for DB (to do inside virtual env)
 
 and then
 ```flask db migrate```
+```flask db upgrade```
 
-stamping of current state
+stamping of current state (if Flask-Migration wasn't used from beginning)
 ```flask db stamp head```
 
 Web-tutorials, used for create it:
