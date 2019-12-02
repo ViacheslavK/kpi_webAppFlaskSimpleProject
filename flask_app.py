@@ -183,7 +183,9 @@ def register_user():
                 permission="commenter")
     db.session.add(user)
     db.session.commit()
-    login_user(user)
+
+    # new_user = load_user(request.form["username"])
+    # login_user(new_user)
     return redirect(url_for('index'))
 
 @app.route("/jobs/", methods=["GET", "POST"])
