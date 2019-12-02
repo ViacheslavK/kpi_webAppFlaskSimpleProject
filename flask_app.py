@@ -40,13 +40,15 @@ class User(UserMixin, db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(128), nullable=False)
+    username = db.Column(db.String(128), unique=True, nullable=False)
     users_firstname = db.Column(db.String(128))
     users_lastname = db.Column(db.String(128))
     users_description = db.Column(db.String(4096))
-    user_email = db.Column(db.String(128), nullable=False)
+    user_email = db.Column(db.String(128), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
     permission = db.Column(db.String(128))
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
+    confirmed_on = db.Column(db.DateTime, nullable=True)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -85,7 +87,7 @@ class Comment(db.Model):
 class CompanyProfile(db.Model):
     __tablename__ = "companies"
     id = db.Column(db.Integer, primary_key=True)
-    company_name = db.Column(db.String(128))
+    company_name = db.Column(db.String(128), unique=True)
     company_description = db.Column(db.String(4096))
     posted = db.Column(db.DateTime, default=datetime.now)
     # rating?
@@ -111,7 +113,7 @@ class CompanyJob(db.Model):
     job_description = db.Column(db.String(4096))
     company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
     company = db.relationship('CompanyProfile', foreign_keys=company_id)
-    visible = db.Column(db.TinyInt, default=1)
+    visible = db.Column(db.Boolean, default=True)
     posted = db.Column(db.DateTime, default=datetime.now)
 
 
