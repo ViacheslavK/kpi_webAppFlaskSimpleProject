@@ -34,20 +34,25 @@ app.secret_key = "something_only_you_know"
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-
+# Users info
 class User(UserMixin, db.Model):
 
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(128))
+    username = db.Column(db.String(128), nullable=False)
+    users_firstname = db.Column(db.String(128))
+    users_lastname = db.Column(db.String(128))
+    users_description = db.Column(db.String(4096))
+    user_email = db.Column(db.String(128), nullable=False)
     password_hash = db.Column(db.String(128))
+    permission = db.Column(db.String(128))
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
     def get_id(self):
-        return self.username
+        return self.id
 
 
 @login_manager.user_loader
@@ -55,24 +60,68 @@ def load_user(user_id):
     return User.query.filter_by(username=user_id).first()
 
 
+# Blog postig stuff
+class BlogPost(db.Model):
+    __tablename__ = "postings"
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(4096))
+    posted = db.Column(db.DateTime, default=datetime.now)
+    blogger_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    commenter = db.relationship('User', foreign_keys=blogger_id)
+
+
 # Comments stuff
 class Comment(db.Model):
-    __tablename__ = "comments"
+    __tablename__ = "blog_comments"
     id = db.Column(db.Integer, primary_key=True)
+    blog_posting = db.Column(db.Integer, db.ForeignKey('postings.id'), nullable=False)
     content = db.Column(db.String(4096))
     posted = db.Column(db.DateTime, default=datetime.now)
     commenter_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     commenter = db.relationship('User', foreign_keys=commenter_id)
 
 
-comments = []
+# Company profile
+class CompanyProfile(db.Model):
+    __tablename__ = "companies"
+    id = db.Column(db.Integer, primary_key=True)
+    company_name = db.Column(db.String(128))
+    company_description = db.Column(db.String(4096))
+    posted = db.Column(db.DateTime, default=datetime.now)
+    # rating?
+
+
+# Company profile
+class CompanyRating(db.Model):
+    __tablename__ = "company_ratings"
+    id = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Integer)
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
+    company = db.relationship('CompanyProfile', foreign_keys=company_id)
+    rater_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    rater = db.relationship('User', foreign_keys=rater_id)
+    posted = db.Column(db.DateTime, default=datetime.now)
+
+
+# Company profile
+class CompanyJob(db.Model):
+    __tablename__ = "company_ratings"
+    id = db.Column(db.Integer, primary_key=True)
+    job_title = db.Column(db.String(128))
+    job_description = db.Column(db.String(4096))
+    company_id = db.Column(db.Integer, db.ForeignKey('companies.id'), nullable=False)
+    company = db.relationship('CompanyProfile', foreign_keys=company_id)
+    visible = db.Column(db.TinyInt, default=1)
+    posted = db.Column(db.DateTime, default=datetime.now)
+
 
 # Routing (endpoints)
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        return render_template("main_page.html", comments=Comment.query.all())
+        # return render_template("main_page.html", comments=Comment.query.all())
+        return render_template("main_page.html")
     
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -115,3 +164,27 @@ if __name__ == '__main__':
     app.run(debug=True)
     # Alt. runner properly for Code, where there is no need to use the in-browser debugger or the reloader
     # app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
+
+@app.route("/register/", methods=["GET", "POST"])
+def register_user():
+    pass
+
+@app.route("/jobs/", methods=["GET", "POST"])
+def jobs_listing():
+    pass
+
+@app.route("/blog/", methods=["GET", "POST"])
+def blog_feed():
+    pass
+
+@app.route("/blog/<blog_id>", methods=["GET", "POST"])
+def blog_posting():
+    pass
+
+@app.route("/profile/<user_id>", methods=["GET", "POST"])
+def view_profile():
+    pass
+
+@app.route("/users/", methods=["GET", "POST"])
+def get_users_list():
+    pass
