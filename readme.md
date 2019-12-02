@@ -18,10 +18,14 @@ stamping of current state
 ```flask db stamp head```
 
 Web-tutorials, used for create it:
-1. https://blog.pythonanywhere.com/121/
-2. https://blog.pythonanywhere.com/158/
+1. https://blog.pythonanywhere.com/121/ (application base DB connection and routing)
+2. https://blog.pythonanywhere.com/158/ (login feature turn on and users added to DB)
+3. https://blog.miguelgrinberg.com/post/setting-up-a-flask-application-in-visual-studio-code (setup tips for project env)
 
 List of packages in use:
-1. https://flask-login.readthedocs.io/en/latest/
-2. https://docs.python.org/3/library/time.html#time.strftime (Date-Time format)
+1. https://palletsprojects.com/p/flask/ (Flask documentation itself)
+2. https://flask.palletsprojects.com/en/1.1.x/ (Some more docs)
+3. https://flask-login.readthedocs.io/en/latest/ (Serve login/auth features)
+4. https://docs.python.org/3/library/time.html#time.strftime (Date-Time format)
+5. https://flask-migrate.readthedocs.io/en/latest/#multiple-database-support (DataBase version control)
 
