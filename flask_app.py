@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 
 # Database connection variables (need to use in connection string)
-databasename = "fla_app"
+databasename = "course_work"
 dialect = "MySQL"
 name = "Flask_App_DB"
 password = "BUSDEVGjtx$mGn3@6L79"
@@ -18,12 +18,8 @@ hostname = "localhost"
 username = "newuser"
 
 # Database connection (hardcoded becasue doesn't worked good as variables)
-SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://newuser:BUSDEVGjtx$mGn3@6L79@127.0.0.1:3306/fla_app".format(
-    username="the username from the 'Databases' tab",
-    password="the password you set on the 'Databases' tab",
-    hostname="the database host address from the 'Databases' tab",
-    databasename="the database name you chose, probably yourusername$comments",
-)
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://newuser:BUSDEVGjtx$mGn3@6L79@127.0.0.1:3306/course_work"
+
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -110,17 +106,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
-# Not used pages
-@app.route('/wibble')
-def wibble():
-    return 'This is my pointless new page'
-
-
-@app.route('/user/<username>')
-def profile(username): 
-    pass
-
 
 if __name__ == '__main__':
     with app.test_request_context():
