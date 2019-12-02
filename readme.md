@@ -21,6 +21,8 @@ Web-tutorials, used for create it:
 1. https://blog.pythonanywhere.com/121/ (application base DB connection and routing)
 2. https://blog.pythonanywhere.com/158/ (login feature turn on and users added to DB)
 3. https://blog.miguelgrinberg.com/post/setting-up-a-flask-application-in-visual-studio-code (setup tips for project env)
+3.1. https://www.youtube.com/watch?v=UXqiVe6h3lA (video from the same author for VC)
+3.2. https://www.youtube.com/watch?v=bZUokrYanFM (video from the same author for PyCharm)
 
 List of packages in use:
 1. https://palletsprojects.com/p/flask/ (Flask documentation itself)
