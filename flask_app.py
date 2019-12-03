@@ -58,8 +58,8 @@ class User(UserMixin, db.Model):
 
 
 @login_manager.user_loader
-def load_user(username):
-    return User.query.filter_by(username=username).first()
+def load_user(user_id):
+    return User.query.filter_by(username=user_id).first()
 
 
 # Blog postig stuff
@@ -180,8 +180,7 @@ def register_user():
     db.session.add(user)
     db.session.commit()
 
-    login_user(user)
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @app.route("/jobs/", methods=["GET", "POST"])
 def jobs_listing():
