@@ -66,13 +66,13 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<User {0}>'.format(self.username)
+        return '<User {0}>'.format(self.id)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def get_id(self):
-        return self.id
+        return self.username
 
 
 @login_manager.user_loader
@@ -139,11 +139,13 @@ class CompanyJob(db.Model):
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
 def index():
-    # if request.method == "GET":
-    #     # return render_template("main_page.html", comments=Comment.query.all())
-    #     return render_template("index.html")
+    if request.method == "GET":
+        return render_template("index.html")
+    
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
 
-    return render_template("index.html")
+    return redirect(url_for("index"))
 
 
 @app.route("/login/", methods=["GET", "POST"])
