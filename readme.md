@@ -29,6 +29,7 @@ Web-tutorials, used for create it:
 3.2. https://www.youtube.com/watch?v=bZUokrYanFM (video from the same author for PyCharm)
 4. https://flask.palletsprojects.com/en/1.1.x/tutorial/ (official tutorial)
 5. https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world (and next chapters)
+6. https://getbootstrap.com/docs/4.4/getting-started/introduction/ (styles, Bootstrap is used)
 
 List of packages in use:
 

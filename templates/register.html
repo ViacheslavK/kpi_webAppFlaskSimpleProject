@@ -7,15 +7,15 @@
 {% block content %}
     <div class="container">
         {% if error=='password' %}
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-danger" role="alert">
                 Passwords are different!
             </div>
         {% elif error=='already_registered_name' %}
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-danger" role="alert">
                 Username already used
             </div>
         {% elif error=='already_registered_email' %}
-            <div class="alert alert-warning" role="alert">
+            <div class="alert alert-danger" role="alert">
                 User with this email already registered
             </div>
         {% endif %}
@@ -36,7 +36,7 @@
                     <input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Repeat password">
                 </div>
                 <button type="submit" class="btn btn-success">Register</button>
-                <button type="reset" class="btn btn-success">Cancel</button>
+                <button type="reset" class="btn btn-warning" onclick="window.location.href='{{url_for('index')}}';">Cancel</button>
             </form>
         </div>
     </div>

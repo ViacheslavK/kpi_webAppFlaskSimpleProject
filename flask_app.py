@@ -59,7 +59,7 @@ class User(UserMixin, db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.filter_by(username=user_id).first()
+    return User.query.filter_by(user_email=user_id).first()
 
 
 # Blog postig stuff
@@ -128,9 +128,9 @@ def index():
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    comment = Comment(content=request.form["contents"], commenter=current_user)
-    db.session.add(comment)
-    db.session.commit()
+    # comment = Comment(content=request.form["contents"], commenter=current_user)
+    # db.session.add(comment)
+    # db.session.commit()
     return redirect(url_for("index"))
 
 
