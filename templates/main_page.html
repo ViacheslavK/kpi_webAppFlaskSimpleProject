@@ -20,12 +20,13 @@
                     <a class="navbar-brand" href="{{ url_for('index') }}">Scandinavian GameDev{% block title %}{% endblock %}</a>
                 </div>
                 <ul class="nav navbar-nav navbar-right">
-                    {% if current_user.is_authenticated() %}
+                    {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('blog_post') }}">Post News</a></li>
                     {% endif %}
                     <li><a href="{{ url_for('dev_companies') }}">Companies</a></li>
                     <li><a href="{{ url_for('jobs_listing') }}">Jobs</a></li>
-                    {% if current_user.is_authenticated() %}
+                    {% if current_user.is_authenticated %}
+                        <li><a href="{{ url_for('profile') }}">Log out</a></li>
                         <li><a href="{{ url_for('logout') }}">Log out</a></li>
                     {% else %}
                         <li><a href="{{ url_for('register_user') }}">Register</a></li>
@@ -40,7 +41,7 @@
         </section>
             
         <div class="container">
-            {% if current_user.is_authenticated() %}
+            {% if current_user.is_authenticated %}
                 <div class="row">
                     <form action="." method="POST">
                         <textarea name="contents" placeholder="Enter a comment" class="form-control"></textarea>

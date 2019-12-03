@@ -50,6 +50,18 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True)
 
+    def __init__(self, id, username, users_firstname, users_lastname, user_email, password_hash):
+        self.id = id
+        self.username = username
+        self.users_firstname = users_firstname
+        self.users_lastname = users_lastname
+        self.users_description = ""
+        self.user_email = user_email
+        self.password_hash = password_hash
+        self.permission = "commenter"
+        self.confirmed = 0
+        self.confirmed_on = None
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -136,14 +148,14 @@ def index():
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         return redirect(url_for('index'))
 
     if request.method == "GET":
         return render_template("login_page.html", error=False)
 
     if request.form["username"] == "www":
-        user = User(username="www", password_hash=generate_password_hash("www"), users_firstname="www", users_lastname="www", users_description="", user_email="w@w.com", permission="commenter")
+        user = User(id=100, username="www", password_hash=generate_password_hash("www"), users_firstname="www", users_lastname="www", user_email="w@w.com")
     else:
         user = load_user(request.form["username"])
     if user is None:
@@ -153,14 +165,12 @@ def login():
         return render_template("login_page.html", error=True)
 
     login = login_user(user)
-    print(login)
-    print(current_user.is_authenticated())
     return redirect(url_for('index'))
 
 
 @app.route("/register/", methods=["GET", "POST"])
 def register_user():
-    if current_user.is_authenticated():
+    if current_user.is_authenticated:
         return redirect(url_for('index'))
 
     if request.method == "GET":
