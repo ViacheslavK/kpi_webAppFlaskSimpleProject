@@ -17,6 +17,11 @@
               by
               {{ post.blogger.username }}
           </small>
+          {% if current_user.is_authenticated %}
+          <small>
+              <input type="submit" class="btn btn-success" value="Edit post">
+          </small>
+          {% endif %}
       </div>
   {% endfor %}
 </div>
