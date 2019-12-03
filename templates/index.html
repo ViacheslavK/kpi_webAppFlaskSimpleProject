@@ -3,3 +3,21 @@
 {% block header %}
   <h1>{% block title %} - Main{% endblock %}</h1>
 {% endblock %}
+
+{% block content %}
+<div class="container">
+  {% for post in blog_posts %}
+      <div class="row" style="margin-bottom: 1ex">
+          {{ post.content }}
+      </div>
+      <div>
+          <small>
+              Posted
+              {{ post.posted.strftime("%A, %d %B %Y at %H:%M") }}
+              by
+              {{ post.blogger.username }}
+          </small>
+      </div>
+  {% endfor %}
+</div>
+{% endblock %}

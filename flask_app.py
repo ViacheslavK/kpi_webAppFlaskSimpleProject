@@ -50,8 +50,7 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True)
 
-    def __init__(self, id, username, users_firstname, users_lastname, user_email, password_hash):
-        self.id = id
+    def __init__(self, username, users_firstname, users_lastname, user_email, password_hash):
         self.username = username
         self.users_firstname = users_firstname
         self.users_lastname = users_lastname
@@ -87,7 +86,7 @@ class BlogPost(db.Model):
     content = db.Column(db.String(4096))
     posted = db.Column(db.DateTime, default=datetime.now)
     blogger_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    commenter = db.relationship('User', foreign_keys=blogger_id)
+    blogger = db.relationship('User', foreign_keys=blogger_id)
 
 
 # Comments stuff
@@ -134,13 +133,14 @@ class CompanyJob(db.Model):
     visible = db.Column(db.Boolean, default=True)
     posted = db.Column(db.DateTime, default=datetime.now)
 
+blog_posts = []
 
 # Routing (endpoints)
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        return render_template("index.html")
+        return render_template("index.html", blog_posts=BlogPost.query.all())
     
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -156,10 +156,7 @@ def login():
     if request.method == "GET":
         return render_template("login_page.html", error=False)
 
-    if request.form["username"] == "www":
-        user = User(id=100, username="www", password_hash=generate_password_hash("www"), users_firstname="www", users_lastname="www", user_email="w@w.com")
-    else:
-        user = load_user(request.form["username"])
+    user = load_user(request.form["username"])
     if user is None:
         return render_template("login_page.html", error=True)
 
@@ -198,8 +195,7 @@ def register_user():
                 users_firstname = request.form["first_name"],
                 users_lastname = request.form["last_name"],
                 user_email=request.form["email"],
-                password_hash=generate_password_hash(request.form["password"]),
-                permission="commenter")
+                password_hash=generate_password_hash(request.form["password"]))
     db.session.add(user)
     db.session.commit()
 
@@ -215,14 +211,25 @@ def dev_companies():
 
 @app.route("/blog/", methods=["GET", "POST"])
 def blog_post():
-    pass
+    if request.method == "GET":
+        return render_template("posting.html")
+    
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    posting = BlogPost(content=request.form["contents"], 
+                       blogger=current_user)
+    db.session.add(posting)
+    db.session.commit()
+
+    return redirect(url_for("index"))
 
 @app.route("/blog/<blog_id>", methods=["GET", "POST"])
 def blog_posting():
     pass
 
-@app.route('/user/<user_id>', methods=["GET", "POST"])
-def profile(user_id):
+@app.route('/user/', methods=["GET", "POST"])
+def profile():
     pass
 
 @app.route("/users/", methods=["GET", "POST"])
@@ -243,6 +250,6 @@ if __name__ == '__main__':
         print(url_for('login'))
         print(url_for('login', next='/'))
         print(url_for('profile', user_id='John Doe'))   
-    # app.run(debug=True)
+    app.run(debug=True)
     # Alt. runner properly for Code, where there is no need to use the in-browser debugger or the reloader
-    app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
+    # app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
