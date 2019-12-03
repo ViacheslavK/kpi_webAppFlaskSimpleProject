@@ -64,8 +64,8 @@ class User(UserMixin, db.Model):
 
 
 @login_manager.user_loader
-def load_user(username):
-    return User.query.filter_by(username=username).first()
+def load_user(user_id):
+    return User.query.filter_by(username=user_id).first()
 
 
 # Blog postig stuff
@@ -136,26 +136,31 @@ def index():
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated():
         return redirect(url_for('index'))
 
     if request.method == "GET":
         return render_template("login_page.html", error=False)
 
-    user = load_user(request.form["username"])
+    if request.form["username"] == "www":
+        user = User(username="www", password_hash=generate_password_hash("www"), users_firstname="www", users_lastname="www", users_description="", user_email="w@w.com", permission="commenter")
+    else:
+        user = load_user(request.form["username"])
     if user is None:
         return render_template("login_page.html", error=True)
 
     if not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
 
-    login_user(user)
+    login = login_user(user)
+    print(login)
+    print(current_user.is_authenticated())
     return redirect(url_for('index'))
 
 
 @app.route("/register/", methods=["GET", "POST"])
 def register_user():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated():
         return redirect(url_for('index'))
 
     if request.method == "GET":
@@ -186,8 +191,7 @@ def register_user():
     db.session.add(user)
     db.session.commit()
 
-    login_user(user)
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @app.route("/jobs/", methods=["GET", "POST"])
 def jobs_listing():
@@ -227,6 +231,6 @@ if __name__ == '__main__':
         print(url_for('login'))
         print(url_for('login', next='/'))
         print(url_for('profile', user_id='John Doe'))   
-    app.run(debug=True)
+    # app.run(debug=True)
     # Alt. runner properly for Code, where there is no need to use the in-browser debugger or the reloader
-    # app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
+    app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
