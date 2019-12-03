@@ -3,3 +3,4 @@ __pycache__
 /libs/*
 /.idea/
 /.pytest_cache/
+/course_work/*
