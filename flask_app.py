@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, render_template, redirect
+from flask import Flask, request, url_for, render_template, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, LoginManager, UserMixin, logout_user, login_required, current_user
 from flask_migrate import Migrate
@@ -52,6 +52,12 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def __repr__(self):
+        return '<User {0}>'.format(self.username)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
     def get_id(self):
         return self.id
@@ -211,6 +217,8 @@ def get_users_list():
 @login_required
 # This is provided by Flask-Login and allows you to protect views so that they can only be accessed by logged-in users
 def logout():
+    user = current_user
+    user.authenticated = False
     logout_user()
     return redirect(url_for('index'))
 
@@ -219,6 +227,6 @@ if __name__ == '__main__':
         print(url_for('login'))
         print(url_for('login', next='/'))
         print(url_for('profile', user_id='John Doe'))   
-    # app.run(debug=True)
+    app.run(debug=True)
     # Alt. runner properly for Code, where there is no need to use the in-browser debugger or the reloader
-    app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
+    # app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
