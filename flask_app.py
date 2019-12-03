@@ -58,8 +58,8 @@ class User(UserMixin, db.Model):
 
 
 @login_manager.user_loader
-def load_user(user_id):
-    return User.query.filter_by(user_email=user_id).first()
+def load_user(username):
+    return User.query.filter_by(username=username).first()
 
 
 # Blog postig stuff
@@ -121,21 +121,18 @@ class CompanyJob(db.Model):
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
 def index():
-    if request.method == "GET":
-        # return render_template("main_page.html", comments=Comment.query.all())
-        return render_template("index.html")
-    
-    if not current_user.is_authenticated:
-        return redirect(url_for('index'))
+    # if request.method == "GET":
+    #     # return render_template("main_page.html", comments=Comment.query.all())
+    #     return render_template("index.html")
 
-    # comment = Comment(content=request.form["contents"], commenter=current_user)
-    # db.session.add(comment)
-    # db.session.commit()
-    return redirect(url_for("index"))
+    return render_template("index.html")
 
 
 @app.route("/login/", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
     if request.method == "GET":
         return render_template("login_page.html", error=False)
 
@@ -146,8 +143,7 @@ def login():
     if not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
 
-    login_user(user) # flask_login function
-
+    login_user(user)
     return redirect(url_for('index'))
 
 
@@ -161,10 +157,10 @@ def register_user():
 
     password = request.form['password']
     password_repeat = request.form['password_repeat']
-    user_email = request.form["email"]
+    entered_email = request.form["email"]
     new_username = request.form["username"]
 
-    registered_emails = User.query.filter(User.user_email==user_email)
+    exists_email = User.query.filter_by(user_email=entered_email).first()
 
     if password != password_repeat:
         return render_template("register.html", error='password')
@@ -172,7 +168,7 @@ def register_user():
     if load_user(new_username) is not None:
         return render_template("register.html", error='already_registered_name')
 
-    if registered_emails.count()>0:
+    if exists_email is not None:
         return render_template("register.html", error='already_registered_email')
 
     user = User(username=request.form["username"],
@@ -184,8 +180,7 @@ def register_user():
     db.session.add(user)
     db.session.commit()
 
-    # new_user = load_user(request.form["username"])
-    # login_user(new_user)
+    login_user(user)
     return redirect(url_for('index'))
 
 @app.route("/jobs/", methods=["GET", "POST"])
@@ -224,6 +219,6 @@ if __name__ == '__main__':
         print(url_for('login'))
         print(url_for('login', next='/'))
         print(url_for('profile', user_id='John Doe'))   
-    app.run(debug=True)
+    # app.run(debug=True)
     # Alt. runner properly for Code, where there is no need to use the in-browser debugger or the reloader
-    # app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
+    app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
