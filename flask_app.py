@@ -73,6 +73,9 @@ class User(UserMixin, db.Model):
     def get_id(self):
         return self.username
 
+    def user_role(self):
+        return self.permission
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -162,7 +165,7 @@ def login():
 
     if not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
-
+    
     login = login_user(user)
     return redirect(url_for('index'))
 
@@ -211,17 +214,15 @@ def dev_companies():
 
 @app.route("/blog/", methods=["GET", "POST"])
 def blog_post():
-    if request.method == "GET":
+    if request.method == "GET" and current_user.is_authenticated and current_user.user_role() in ['admin', 'blogger']:
         return render_template("posting.html")
-    
-    if not current_user.is_authenticated:
+    else:
         return redirect(url_for('index'))
-
+    
     posting = BlogPost(content=request.form["contents"], 
-                       blogger=current_user)
+                    blogger=current_user)
     db.session.add(posting)
     db.session.commit()
-
     return redirect(url_for("index"))
 
 @app.route("/blog/<blog_id>", methods=["GET", "POST"])
@@ -229,12 +230,16 @@ def blog_posting():
     pass
 
 @app.route('/user/', methods=["GET", "POST"])
-def profile():
-    pass
+@app.route('/user/<username>', methods=["GET", "POST"])
+def profile(username=None):
+    return render_template('profile_page.html', username=username)
 
 @app.route("/users/", methods=["GET", "POST"])
 def get_users_list():
-    pass
+    if request.method == "GET" and current_user.user_role() == 'admin':
+        return render_template("users_list.html", registered_users=User.query.all())
+
+    return redirect(url_for("index"))
 
 @app.route("/logout/")
 @login_required
