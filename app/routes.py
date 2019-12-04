@@ -1,17 +1,18 @@
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash
 from flask import request, url_for, render_template, redirect
-from app import app
-from app.models import User, BlogPost
+from app import app, db
+from app.models import User, BlogPost, load_user
+from sqlalchemy import desc
 
-blog_posts = []
+# blog_posts = []
 
 # Routing (endpoints)
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        return render_template("index.html", blog_posts=BlogPost.query.all())
+        return render_template("index.html", blog_posts=BlogPost.query.order_by(desc(BlogPost.posted)).all())
     
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -85,14 +86,14 @@ def dev_companies():
 def blog_post():
     if request.method == "GET" and current_user.is_authenticated and current_user.user_role() in ['admin', 'blogger']:
         return render_template("posting.html")
+    elif request.method == "POST" and current_user.is_authenticated and current_user.user_role() in ['admin', 'blogger']:
+        posting = BlogPost(content=request.form["contents"], 
+                        blogger=current_user)
+        db.session.add(posting)
+        db.session.commit()
+        return redirect(url_for("index"))
     else:
         return redirect(url_for('index'))
-    
-    posting = BlogPost(content=request.form["contents"], 
-                    blogger=current_user)
-    db.session.add(posting)
-    db.session.commit()
-    return redirect(url_for("index"))
 
 @app.route("/blog/<blog_id>", methods=["GET", "POST"])
 def blog_posting():
