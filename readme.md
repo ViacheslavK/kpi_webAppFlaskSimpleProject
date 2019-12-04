@@ -39,3 +39,4 @@ List of packages in use:
 4. https://docs.python.org/3/library/time.html#time.strftime (Date-Time format)
 5. https://flask-migrate.readthedocs.io/en/latest/#multiple-database-support (DataBase version control)
 
+# add python-dotenv
