@@ -1,0 +1,21 @@
+{% extends 'main_page.html' %}
+
+{% block header %}
+  <h1>{% block title %} - Add blog post{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if current_user.is_authenticated %}
+        <div class="row">
+            <form action="." method="POST">
+                <div class="form-group">
+                    <textarea name="contents" placeholder="Add some information" class="form-control"></textarea>
+                </div>
+                <input type="submit" class="btn btn-success" value="Add post">
+                <button type="reset" class="btn btn-warning" onclick='window.location.href="{{url_for("index")}}";'>Cancel</button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

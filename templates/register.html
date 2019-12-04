@@ -25,7 +25,8 @@
                     <label for="username">Desired username:</label>
                     <input class="form-control" id="username" name="username" placeholder="Enter your username">
                     <label for="email">Email:</label>
-                    <input class="form-control" id="email" name="email" placeholder="Enter your email">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                     <label for="first_name">First name:</label>
                     <input class="form-control" id="first_name" name="first_name" placeholder="Enter your first name">
                     <label for="last_name">Last name:</label>
@@ -36,7 +37,7 @@
                     <input type="password" class="form-control" id="password_repeat" name="password_repeat" placeholder="Repeat password">
                 </div>
                 <button type="submit" class="btn btn-success">Register</button>
-                <button type="reset" class="btn btn-warning" onclick='window.location.href="{{url_for("index")}}";'>Cancel</button>
+                <button type="reset" class="btn btn-warning">Cancel</button>
             </form>
         </div>
     </div>

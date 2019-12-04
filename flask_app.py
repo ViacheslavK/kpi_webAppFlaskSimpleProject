@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, render_template, redirect
+from flask import Flask, request, url_for, render_template, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_user, LoginManager, UserMixin, logout_user, login_required, current_user
 from flask_migrate import Migrate
@@ -50,16 +50,36 @@ class User(UserMixin, db.Model):
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
     confirmed_on = db.Column(db.DateTime, nullable=True)
 
+    def __init__(self, username, users_firstname, users_lastname, user_email, password_hash):
+        self.username = username
+        self.users_firstname = users_firstname
+        self.users_lastname = users_lastname
+        self.users_description = ""
+        self.user_email = user_email
+        self.password_hash = password_hash
+        self.permission = "commenter"
+        self.confirmed = 0
+        self.confirmed_on = None
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def __repr__(self):
+        return '<User {0}>'.format(self.id)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
     def get_id(self):
-        return self.id
+        return self.username
+
+    def user_role(self):
+        return self.permission
 
 
 @login_manager.user_loader
-def load_user(username):
-    return User.query.filter_by(username=username).first()
+def load_user(user_id):
+    return User.query.filter_by(username=user_id).first()
 
 
 # Blog postig stuff
@@ -69,7 +89,7 @@ class BlogPost(db.Model):
     content = db.Column(db.String(4096))
     posted = db.Column(db.DateTime, default=datetime.now)
     blogger_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    commenter = db.relationship('User', foreign_keys=blogger_id)
+    blogger = db.relationship('User', foreign_keys=blogger_id)
 
 
 # Comments stuff
@@ -116,16 +136,19 @@ class CompanyJob(db.Model):
     visible = db.Column(db.Boolean, default=True)
     posted = db.Column(db.DateTime, default=datetime.now)
 
+blog_posts = []
 
 # Routing (endpoints)
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
 def index():
-    # if request.method == "GET":
-    #     # return render_template("main_page.html", comments=Comment.query.all())
-    #     return render_template("index.html")
+    if request.method == "GET":
+        return render_template("index.html", blog_posts=BlogPost.query.all())
+    
+    if not current_user.is_authenticated:
+        return redirect(url_for('index'))
 
-    return render_template("index.html")
+    return redirect(url_for("index"))
 
 
 @app.route("/login/", methods=["GET", "POST"])
@@ -142,8 +165,8 @@ def login():
 
     if not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
-
-    login_user(user)
+    
+    login = login_user(user)
     return redirect(url_for('index'))
 
 
@@ -175,13 +198,11 @@ def register_user():
                 users_firstname = request.form["first_name"],
                 users_lastname = request.form["last_name"],
                 user_email=request.form["email"],
-                password_hash=generate_password_hash(request.form["password"]),
-                permission="commenter")
+                password_hash=generate_password_hash(request.form["password"]))
     db.session.add(user)
     db.session.commit()
 
-    login_user(user)
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @app.route("/jobs/", methods=["GET", "POST"])
 def jobs_listing():
@@ -193,24 +214,39 @@ def dev_companies():
 
 @app.route("/blog/", methods=["GET", "POST"])
 def blog_post():
-    pass
+    if request.method == "GET" and current_user.is_authenticated and current_user.user_role() in ['admin', 'blogger']:
+        return render_template("posting.html")
+    else:
+        return redirect(url_for('index'))
+    
+    posting = BlogPost(content=request.form["contents"], 
+                    blogger=current_user)
+    db.session.add(posting)
+    db.session.commit()
+    return redirect(url_for("index"))
 
 @app.route("/blog/<blog_id>", methods=["GET", "POST"])
 def blog_posting():
     pass
 
-@app.route('/user/<user_id>', methods=["GET", "POST"])
-def profile(user_id):
-    pass
+@app.route('/user/', methods=["GET", "POST"])
+@app.route('/user/<username>', methods=["GET", "POST"])
+def profile(username=None):
+    return render_template('profile_page.html', username=username)
 
 @app.route("/users/", methods=["GET", "POST"])
 def get_users_list():
-    pass
+    if request.method == "GET" and current_user.user_role() == 'admin':
+        return render_template("users_list.html", registered_users=User.query.all())
+
+    return redirect(url_for("index"))
 
 @app.route("/logout/")
 @login_required
 # This is provided by Flask-Login and allows you to protect views so that they can only be accessed by logged-in users
 def logout():
+    user = current_user
+    user.authenticated = False
     logout_user()
     return redirect(url_for('index'))
 
@@ -219,6 +255,6 @@ if __name__ == '__main__':
         print(url_for('login'))
         print(url_for('login', next='/'))
         print(url_for('profile', user_id='John Doe'))   
-    # app.run(debug=True)
+    app.run(debug=True)
     # Alt. runner properly for Code, where there is no need to use the in-browser debugger or the reloader
-    app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
+    # app.run(use_debugger=False, use_reloader=False, passthrough_errors=True)
