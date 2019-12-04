@@ -1,7 +1,7 @@
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash
 from flask import request, url_for, render_template, redirect
-from app import  app
+from app import app
 from app.models import User, BlogPost
 
 blog_posts = []
