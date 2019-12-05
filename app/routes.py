@@ -126,7 +126,7 @@ def blog_posting():
 @app.route('/user/<username>', methods=["GET", "POST"])
 @login_required
 def profile(username=None):
-    return render_template('profile_page.html', username=username)
+    return render_template('user_page.html', username=username)
 
 @app.route("/users/", methods=["GET", "POST"])
 @login_required
