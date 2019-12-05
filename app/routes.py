@@ -93,9 +93,14 @@ def send_cv(job_id):
     return redirect(url_for("index"))
 
 @app.route("/companies/", methods=["GET", "POST"])
-def dev_companies():
-    if request.method == "GET":
+@app.route("/companies/<company_id>", methods=["GET", "POST"])
+def dev_companies(company_id=None):
+    if request.method == "GET" and company_id == None:
         return render_template("companies.html", companies_list=CompanyProfile.query.all())
+    if request.method == "GET" and company_id != None:
+        return render_template("company_page.html", 
+        displayed_company=CompanyProfile.query.filter_by(company_id=id).first(), 
+        company_jobs=CompanyJob.query.filter_by(company_id=company_id).filter_by(visible=True).all())
 
     return redirect(url_for("index"))
 

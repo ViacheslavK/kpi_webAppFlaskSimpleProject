@@ -13,9 +13,9 @@
                 <span class="badge badge-primary">{{ user.user_role() }}</span>
             </h4> 
         </div>
-        <div>
-            <a class="nav-item nav-link" href="{{url_for('profile', username=user.username)}}">Edit profile for {{ user.username }}</a>
-        </div>
+        {% if current_user.is_authenticatedand current_user.user_role() in ['admin'] %}
+            <a class="btn btn-info btn-sm" href="{{ url_for('profile', username=user.username) }}">Edit profile for {{ user.username }}</a>
+        {% endif %}
     {% endfor %}
 </div>
 {% endblock %}
