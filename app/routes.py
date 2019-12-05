@@ -5,8 +5,6 @@ from app import app, db
 from app.models import User, BlogPost, load_user
 from sqlalchemy import desc
 
-# blog_posts = []
-
 # Routing (endpoints)
 # Allow endpoint GET and POST actions; othrvice will get an error "Method is not allowed"
 @app.route('/', methods=["GET", "POST"])
@@ -75,11 +73,31 @@ def register_user():
 
 @app.route("/jobs/", methods=["GET", "POST"])
 def jobs_listing():
-    pass
+    if request.method == "GET":
+        return render_template("jobs_list.html", actual_jobs_list=CompanyJob.query.filter_by(visible=True).all())
+
+    return redirect(url_for("index"))
+
+@app.route("/jobs/", methods=["GET", "POST"])
+def jobs_deactivated():
+    if request.method == "GET":
+        return render_template("jobs_deactivated.html", deactivated_jobs=CompanyJob.query.filter_by(visible=False).all())
+
+    return redirect(url_for("index"))
+
+@app.route("/jobs/<job_id>", methods=["GET", "POST"])
+def send_cv(job_id):
+    if request.method == "GET":
+        return render_template("job_page.html", selected_job=CompanyJob.query.filter_by(id=job_id).first_404())
+
+    return redirect(url_for("index"))
 
 @app.route("/companies/", methods=["GET", "POST"])
 def dev_companies():
-    pass
+    if request.method == "GET":
+        return render_template("companies.html", companies_list=CompanyProfile.query.all())
+
+    return redirect(url_for("index"))
 
 @app.route("/blog/", methods=["GET", "POST"])
 @login_required

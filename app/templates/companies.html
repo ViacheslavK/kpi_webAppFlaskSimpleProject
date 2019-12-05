@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %} - Dev Companies{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% for company in companies_list %}
+        <h2 class="row" style="margin-bottom: 1ex">
+            {{ company.company_name }}
+        </h2>
+        <div class="row" style="margin-bottom: 1ex">
+            {{ company.company_description }}
+        </div>
+        <div>
+            {% if current_user.is_authenticatedand current_user.user_role() in ['admin'] %}
+            <small>
+                <input type="submit" class="btn btn-info btn-sm" value="Edit company">
+                <input type="submit" class="btn btn-danger btn-sm" value="Delete company">
+            </small>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
