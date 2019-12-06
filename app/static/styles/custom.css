@@ -7,3 +7,8 @@
 .vertical-center {
     margin: 0;
 }
+
+.center-form {
+    margin: auto;
+    border: 3px solid green;
+}
