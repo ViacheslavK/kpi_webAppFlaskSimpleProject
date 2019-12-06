@@ -9,5 +9,10 @@
 }
 
 .center-form {
-    margin: auto;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.buttons-form {
+    margin-top: 5px;
 }
