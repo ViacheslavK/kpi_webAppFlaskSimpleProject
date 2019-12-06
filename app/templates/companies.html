@@ -1,0 +1,34 @@
+{# Display list of companies #}
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %} - Dev Companies{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if current_user.is_authenticated and current_user.user_role() in ['admin'] %}
+    <div class="form-group" style="margin-top:5px; margin-bottom:5px;">
+        <a name="add_company" class="btn btn-info btn-sm" href="{{url_for('add_company')}}">Add new company</a>
+    </div>
+    {% endif %}
+    {% for company in companies_list %}
+        <h2 class="row" style="margin-bottom: 1ex">
+            {{ company.company_name }}
+        </h2>
+        <div class="row" style="margin-bottom: 1ex">
+            {{ company.company_description }}
+        </div>
+        <div>
+            {% if current_user.is_authenticated and current_user.user_role() in ['admin'] %}
+            <small>
+                <form action="." method="POST">
+                    <input type="submit" class="btn btn-info btn-sm" value="Edit company">
+                    <input type="submit" class="btn btn-danger btn-sm" value="Delete company">
+                </form>
+            </small>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
