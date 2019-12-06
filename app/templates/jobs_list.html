@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-{% if current_user.is_authenticatedand current_user.user_role() in ['admin'] %}
+{% if current_user.is_authenticatedand and current_user.user_role() in ['admin'] %}
     <a href="{{ url_for('jobs_deactivated') }}">Reactivate deactivated jobs</a>
 {% endif %}
 <div class="container">
@@ -27,10 +27,10 @@
             {% if not current_user.is_authenticatedand %}
                 <div>Please login if you want to send CV to this job</div>
             {% endif %}
-            {% if current_user.is_authenticatedand current_user.user_role() in ['blogger', 'commenter'] %}
+            {% if current_user.is_authenticatedand and current_user.user_role() in ['blogger', 'commenter'] %}
                 <a class="btn btn-info btn-sm" href="{{ url_for('send_cv(job.id)') }}">Send CV to this job</a>
             {% endif %}
-            {% if current_user.is_authenticatedand current_user.user_role() in ['admin'] %}
+            {% if current_user.is_authenticatedand and current_user.user_role() in ['admin'] %}
             <small>
                 <a class="btn btn-info btn-sm" href="{{ url_for('send_cv(job.id)') }}">Edit job</a>
                 <input type="submit" class="btn btn-info btn-sm" value="Delete job">

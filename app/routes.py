@@ -2,7 +2,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash
 from flask import request, url_for, render_template, redirect
 from app import app, db
-from app.models import User, BlogPost, load_user
+from app.models import User, BlogPost, CompanyProfile, CompanyJob, load_user
 from sqlalchemy import desc
 
 # Routing (endpoints)
@@ -88,21 +88,33 @@ def jobs_deactivated():
 @app.route("/jobs/<job_id>", methods=["GET", "POST"])
 def send_cv(job_id):
     if request.method == "GET":
-        return render_template("job_page.html", selected_job=CompanyJob.query.filter_by(id=job_id).first_404())
+        return render_template("job_page.html", selected_job=CompanyJob.query.filter_by(id=job_id).first_or_404())
 
     return redirect(url_for("index"))
 
 @app.route("/companies/", methods=["GET", "POST"])
 @app.route("/companies/<company_id>", methods=["GET", "POST"])
 def dev_companies(company_id=None):
-    if request.method == "GET" and company_id == None:
-        return render_template("companies.html", companies_list=CompanyProfile.query.all())
-    if request.method == "GET" and company_id != None:
-        return render_template("company_page.html", 
-        displayed_company=CompanyProfile.query.filter_by(company_id=id).first(), 
-        company_jobs=CompanyJob.query.filter_by(company_id=company_id).filter_by(visible=True).all())
+    if request.method == "GET":
+        if company_id == None:
+            return render_template("companies.html", companies_list=CompanyProfile.query.all())
+        else:
+            return render_template("company_page.html", 
+                displayed_company=CompanyProfile.query.filter_by(id=company_id).first_or_404(), 
+                company_jobs=CompanyJob.query.filter_by(id=company_id).filter_by(visible=True).all())
 
-    return redirect(url_for("index"))
+
+@app.route("/add_company/", methods=["GET", "POST"])
+def add_company():
+    if request.method == "GET" and current_user.is_authenticated and current_user.user_role() in ['admin']:
+        return render_template("company_page.html", displayed_company=None)
+    elif request.method == "POST" and current_user.is_authenticated and current_user.user_role() in ['admin']:
+        new_company = CompanyProfile(company_name=request.form["company_name"], company_description=request.form["company_description"])
+        db.session.add(new_company)
+        db.session.commit()
+        return redirect(url_for("index"))
+    else:
+        return redirect(url_for('index'))
 
 @app.route("/blog/", methods=["GET", "POST"])
 @login_required
