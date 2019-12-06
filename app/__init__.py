@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 
-app = Flask(__name__, static_folder=f"{url_for('static')}", template_folder=f"{url_for('templates')}")
+app = Flask(__name__, static_folder="../static", template_folder="../templates")
 app.config.from_object(Config)
 app.secret_key = "something_only_you_know"
 
