@@ -137,6 +137,7 @@ def add_company():
     else:
         return redirect(url_for('index'))
 
+
 @app.route("/blog/", methods=["GET", "POST"])
 @login_required
 def blog_post():
@@ -151,9 +152,27 @@ def blog_post():
     else:
         return redirect(url_for('index'))
 
-@app.route("/blog/<blog_id>", methods=["GET", "POST"])
-def blog_posting():
-    pass
+
+@app.route("/blog/<blogpost>", methods=["GET", "POST"])
+def blog_posting(blogpost):
+    post_for_update=BlogPost.query.filter_by(id=blogpost).first_or_404()
+    if request.method == "GET":
+        return render_template("blog_entry.html", post=post_for_update)
+    elif request.form["contents"] != None:
+        new_content=request.form["contents"]
+        post_for_update.content=new_content
+        db.session.commit()
+        return redirect(url_for("index"))
+    else:
+        return redirect(url_for("index"))
+
+
+@app.route("/blog/<blogpost>/delete", methods=["GET", "POST"])
+def delete_post(blogpost):
+    BlogPost.query.filter_by(id=blogpost).delete()
+    db.session.commit()
+    return redirect(url_for('index'))
+
 
 @app.route('/user/', methods=["GET", "POST"])
 @app.route('/user/<username>', methods=["GET", "POST"])
