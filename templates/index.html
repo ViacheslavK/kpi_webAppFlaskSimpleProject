@@ -8,22 +8,42 @@
 {% block content %}
 <div class="container">
   {% for post in blog_posts %}
-      <div class="row" style="margin-bottom: 1ex">
-          {{ post.content }}
-      </div>
-      <div>
-          <small>
-              Posted
-              {{ post.posted.strftime("%A, %d %B %Y at %H:%M") }}
-              by
-              {{ post.blogger.username }}
-          </small>
-          {% if current_user.is_authenticated %}
-          <small>
-              <input type="submit" class="btn btn-info btn-sm" value="Edit post">
-              <input type="submit" class="btn btn-danger btn-sm" value="Delete post">
-          </small>
-          {% endif %}
+        <div class="row" style="margin-bottom: 1ex">
+            {{ post.content }}
+        </div>
+        <div>
+        <small>
+            Posted
+            {{ post.posted.strftime("%A, %d %B %Y at %H:%M") }}
+            by
+            {{ post.blogger.username }}
+        </small>
+        {% if current_user.is_authenticated %}
+        <small>
+            <a type="submit" class="btn btn-info btn-sm" href="{{ url_for('blog_posting', blogpost=post.id)}}">Edit post</a>
+            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletePosing">Delete post</button>
+        </small>
+        <!-- Modal -->
+        <div class="modal fade" id="deletePosing" tabindex="-1" role="dialog" aria-labelledby="deletePosingTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deletePosingTitle">Delete blog post</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                <div class="modal-body">
+                    Are you shure, that you want to delete this blog entry?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                    <a type="button" class="btn btn-danger" href="{{ url_for('delete_post', blogpost=post.id)}}">Delete</a>
+                </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
       </div>
   {% endfor %}
 </div>

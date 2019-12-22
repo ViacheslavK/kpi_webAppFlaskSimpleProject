@@ -28,7 +28,9 @@
                 <div>Please login if you want to send CV to this job</div>
             {% endif %}
             {% if current_user.is_authenticatedand and current_user.user_role() in ['blogger', 'commenter'] %}
-                <a class="btn btn-info btn-sm" href="{{ url_for('send_cv(job.id)') }}">Send CV to this job</a>
+                <form action="mailto:a@a.com" enctype="text/plain">
+                    <a class="btn btn-info btn-sm" href="{{ url_for('send_cv(job.id)') }}">Send CV to this job</a>
+                </form>
             {% endif %}
             {% if current_user.is_authenticatedand and current_user.user_role() in ['admin'] %}
             <small>

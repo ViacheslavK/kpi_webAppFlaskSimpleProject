@@ -93,15 +93,36 @@ def send_cv(job_id):
     return redirect(url_for("index"))
 
 @app.route("/companies/", methods=["GET", "POST"])
-@app.route("/companies/<company_id>", methods=["GET", "POST"])
-def dev_companies(company_id=None):
+def dev_companies():
     if request.method == "GET":
-        if company_id == None:
-            return render_template("companies.html", companies_list=CompanyProfile.query.all())
+        return render_template("companies.html", companies_list=CompanyProfile.query.all())
+
+@app.route("/companies/<company_name>", methods=["GET", "POST"])
+def dev_company(company_name):
+    updated_company=CompanyProfile.query.filter_by(company_name=company_name).first_or_404()
+    if request.method == "GET":
+        return render_template("company_page.html", displayed_company=updated_company)
+           # company_jobs=CompanyJob.query.filter_by(id=company_id).filter_by(visible=True).all())
+    else:
+        updated_company_name=request.form["company_name"]
+        updated_company_description=request.form["company_description"]
+        check_company_name = CompanyProfile.query.filter_by(company_name=updated_company_name).first()
+        if check_company_name != None:
+            pass # Handle company_already_exists error
+        elif updated_company_name != None and updated_company_description != None:
+            updated_company.company_name = updated_company_name
+            updated_company.company_description = updated_company_description
+            db.session.commit()
+            return redirect(url_for('dev_companies'))
         else:
-            return render_template("company_page.html", 
-                displayed_company=CompanyProfile.query.filter_by(id=company_id).first_or_404(), 
-                company_jobs=CompanyJob.query.filter_by(id=company_id).filter_by(visible=True).all())
+            pass # Handle incorrect_company_data error
+
+
+@app.route("/companies/<company_name>/delete", methods=["GET", "POST"])
+def delete_company(company_name):
+    CompanyProfile.query.filter_by(company_name=company_name).delete()
+    db.session.commit()
+    return redirect(url_for('dev_companies'))
 
 
 @app.route("/add_company/", methods=["GET", "POST"])
@@ -115,6 +136,7 @@ def add_company():
         return redirect(url_for("index"))
     else:
         return redirect(url_for('index'))
+
 
 @app.route("/blog/", methods=["GET", "POST"])
 @login_required
@@ -130,9 +152,27 @@ def blog_post():
     else:
         return redirect(url_for('index'))
 
-@app.route("/blog/<blog_id>", methods=["GET", "POST"])
-def blog_posting():
-    pass
+
+@app.route("/blog/<blogpost>", methods=["GET", "POST"])
+def blog_posting(blogpost):
+    post_for_update=BlogPost.query.filter_by(id=blogpost).first_or_404()
+    if request.method == "GET":
+        return render_template("blog_entry.html", post=post_for_update)
+    elif request.form["contents"] != None:
+        new_content=request.form["contents"]
+        post_for_update.content=new_content
+        db.session.commit()
+        return redirect(url_for("index"))
+    else:
+        return redirect(url_for("index"))
+
+
+@app.route("/blog/<blogpost>/delete", methods=["GET", "POST"])
+def delete_post(blogpost):
+    BlogPost.query.filter_by(id=blogpost).delete()
+    db.session.commit()
+    return redirect(url_for('index'))
+
 
 @app.route('/user/', methods=["GET", "POST"])
 @app.route('/user/<username>', methods=["GET", "POST"])
