@@ -11,7 +11,7 @@
         <div class="row">
             <form action="." method="POST">
                 <div class="form-group">
-                    <textarea name="contents" placeholder="Add some information" class="form-control"></textarea>
+                    <textarea name="contents" placeholder="Add some information" class="form-control non-resize" rows="20" cols="95" required></textarea>
                 </div>
                 <input type="submit" class="btn btn-success" value="Add post">
                 <button type="reset" class="btn btn-warning" onclick='window.location.href="{{url_for("index")}}";'>Cancel</button>

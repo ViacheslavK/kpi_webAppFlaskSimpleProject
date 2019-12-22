@@ -21,3 +21,8 @@
     margin: auto;
     width: 90%;
 }
+
+textarea.non-resize {
+    resize: none;
+    margin-top: 5px;
+}

@@ -178,7 +178,11 @@ def delete_post(blogpost):
 @app.route('/user/<username>', methods=["GET", "POST"])
 @login_required
 def profile(username=None):
-    return render_template('user_page.html', username=username)
+    if username == None:
+        displayed_user = User.query.filter_by(username=current_user.get_id()).first()
+    else:
+        displayed_user = User.query.filter_by(username=username).first_or_404()
+    return render_template('user_page.html', displayed_user=displayed_user)
 
 @app.route("/users/", methods=["GET", "POST"])
 @login_required
