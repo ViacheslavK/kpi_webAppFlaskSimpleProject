@@ -11,8 +11,8 @@
         <div class="row" style="margin-bottom: 1ex">
             {{ post.content }}
         </div>
-        <div>
-        <small>
+        <div class="row">
+        <small class="posted-info btn btn-sm btn-primary disabled" aria-disabled="true">
             Posted
             {{ post.posted.strftime("%A, %d %B %Y at %H:%M") }}
             by

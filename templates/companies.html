@@ -8,7 +8,7 @@
 {% block content %}
 <div class="container">
     {% if current_user.is_authenticated and current_user.user_role() in ['admin'] %}
-    <div class="form-group" style="margin-top:5px; margin-bottom:5px;">
+    <div class="form-group row" style="margin-top:5px; margin-bottom:5px;">
         <a name="add_company" class="btn btn-info btn-sm" href="{{url_for('add_company')}}">Add new company</a>
     </div>
     {% endif %}
@@ -19,7 +19,7 @@
         <div class="row" style="margin-bottom: 1ex">
             {{ company.company_description }}
         </div>
-        <div>
+        <div class="row">
             {% if current_user.is_authenticated and current_user.user_role() in ['admin'] %}
             <small>
                 <a type="submit" class="btn btn-info btn-sm" href="{{ url_for('dev_company', company_name=company.company_name)}}">Edit {{ company.company_name }}</a>

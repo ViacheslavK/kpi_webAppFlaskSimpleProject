@@ -26,3 +26,7 @@ textarea.non-resize {
     resize: none;
     margin-top: 5px;
 }
+
+.posted-info {
+    margin-right: 15px;
+}
