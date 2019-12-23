@@ -23,12 +23,17 @@
         {% endfor %}
     {% endif %}
     {% if current_user.is_authenticated and current_user.user_role() in ['admin'] and displayed_company != None %}
+        {% if alert == "CompanyExist" %}
+            <div class="alert alert-danger buttons-form" role="alert">
+                Company with this name already registered!
+            </div>
+        {% endif %}
         <form action="{{ url_for('dev_company', company_name=displayed_company.company_name) }}" method="POST">
             <label for="company_name">Company name:</label>
             <input class="form-control" id="company_name" name="company_name" value="{{ displayed_company.company_name }}" required>
             <label for="company_description">Company info:</label>
             <input class="form-control" id="company_description" name="company_description" value="{{ displayed_company.company_description }}" required>
-            <button type="submit" class="btn btn-success">Save changes</button>
+            <button type="submit" class="btn btn-success buttons-form">Save changes</button>
         </form>
         {% for job in company_jobs %}
             <h2 class="row" style="margin-bottom: 1ex"> {{ job.job_title }} </h2>
