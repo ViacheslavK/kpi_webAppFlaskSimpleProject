@@ -6,8 +6,25 @@
 {% endblock %}
 
 {% block content %}
-{% if current_user.is_authenticatedand and current_user.user_role() in ['admin'] %}
-    <a href="{{ url_for('jobs_deactivated') }}">Reactivate deactivated jobs</a>
+{% if current_user.is_authenticated and current_user.user_role()=='admin' %}
+<div class="container">
+    <div class="row">
+        <form action="." method="POST">
+            <div class="form-group">
+                <input type="text" name="title" placeholder="Add job title" class="form-control non-resize buttons-form" rows="20" cols="95" required>
+                <textarea name="description" placeholder="Add job description" class="form-control non-resize" rows="20" cols="95" required></textarea>
+            </div>
+            <select name="company" class="custom-select">
+                {% for company in companies_list %}
+                <option value="{{company.id}}">{{company.company_name}}</option>
+                {% endfor %}
+              </select>
+            <input type="submit" class="btn btn-success buttons-form" value="Add job">
+            <button type="reset" class="btn btn-warning buttons-form" onclick='window.location.href="{{url_for("index")}}";'>Cancel</button>
+        </form>
+    </div>
+    <a class="row btn btn-dark" href="{{ url_for('jobs_deactivated') }}">Reactivate deactivated jobs</a>
+</div>
 {% endif %}
 <div class="container">
     {% for job in actual_jobs_list %}
@@ -17,24 +34,24 @@
         <div class="row" style="margin-bottom: 1ex">
             {{ job.job_description }}
         </div>
-        <small>
-                Posted
-                {{ job.posted.strftime("%A, %d %B %Y at %H:%M") }}
-                by
-                {{ job.company.company_name }}
-            </small>
-        <div>
-            {% if not current_user.is_authenticatedand %}
+        <small class="row">
+            Posted
+            {{ job.posted.strftime("%A, %d %B %Y at %H:%M") }}
+            by
+            {{ job.company.company_name }}
+        </small>
+        <div class="row footer-saver">
+            {% if not current_user.is_authenticated %}
                 <div>Please login if you want to send CV to this job</div>
             {% endif %}
-            {% if current_user.is_authenticatedand and current_user.user_role() in ['blogger', 'commenter'] %}
+            {% if current_user.is_authenticated and current_user.user_role() in ['blogger', 'commenter'] %}
                 <form action="mailto:a@a.com" enctype="text/plain">
-                    <a class="btn btn-info btn-sm" href="{{ url_for('send_cv(job.id)') }}">Send CV to this job</a>
+                    <a class="btn btn-info btn-sm" href="{{ url_for('send_cv', job_id=job.id) }}">Send CV to this job</a>
                 </form>
             {% endif %}
-            {% if current_user.is_authenticatedand and current_user.user_role() in ['admin'] %}
+            {% if current_user.is_authenticated and current_user.user_role() in ['admin'] %}
             <small>
-                <a class="btn btn-info btn-sm" href="{{ url_for('send_cv(job.id)') }}">Edit job</a>
+                <a class="btn btn-info btn-sm" href="{{ url_for('send_cv', job_id=job.id) }}">Edit job</a>
                 <input type="submit" class="btn btn-info btn-sm" value="Delete job">
                 <input type="submit" class="btn btn-danger btn-sm" value="Deactivate job">
             </small>

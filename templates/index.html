@@ -18,7 +18,7 @@
             by
             {{ post.blogger.username }}
         </small>
-        {% if current_user.is_authenticated %}
+        {% if current_user.is_authenticated and current_user.user_role() == 'admin' or current_user.get_id() == post.blogger.username %}
         <small>
             <a type="submit" class="btn btn-info btn-sm" href="{{ url_for('blog_posting', blogpost=post.id)}}">Edit post</a>
             <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deletePosing">Delete post</button>

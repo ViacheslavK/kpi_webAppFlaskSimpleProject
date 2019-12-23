@@ -74,11 +74,18 @@ def register_user():
 @app.route("/jobs/", methods=["GET", "POST"])
 def jobs_listing():
     if request.method == "GET":
-        return render_template("jobs_list.html", actual_jobs_list=CompanyJob.query.filter_by(visible=True).all())
-
+        return render_template("jobs_list.html", actual_jobs_list=CompanyJob.query.filter_by(visible=True).all(), companies_list=CompanyProfile.query.all())
+    job_title = request.form['title']
+    job_description = request.form['description']
+    job_connected_company = request.form['company']
+    job = CompanyJob(job_title=job_title,
+                    job_description=job_description,
+                    company_id=job_connected_company)
+    db.session.add(job)
+    db.session.commit()
     return redirect(url_for("index"))
 
-@app.route("/jobs/", methods=["GET", "POST"])
+@app.route("/inactive-jobs/", methods=["GET", "POST"])
 def jobs_deactivated():
     if request.method == "GET":
         return render_template("jobs_deactivated.html", deactivated_jobs=CompanyJob.query.filter_by(visible=False).all())
@@ -182,7 +189,32 @@ def profile(username=None):
         displayed_user = User.query.filter_by(username=current_user.get_id()).first()
     else:
         displayed_user = User.query.filter_by(username=username).first_or_404()
-    return render_template('user_page.html', displayed_user=displayed_user)
+    if request.method == "GET":    
+        return render_template('user_page.html', displayed_user=displayed_user)
+    else:
+        if request.form["firstName"] != "":
+            desired_first_name=request.form["firstName"]
+            displayed_user.users_firstname = desired_first_name
+        if request.form["lastName"] != "":
+            desired_last_name=request.form["lastName"]
+            displayed_user.users_lastname = desired_last_name
+        if request.form["userDescription"] != "":
+            desired_description=request.form["userDescription"]
+            displayed_user.users_description = desired_description
+        if displayed_user != current_user:
+            if request.form["user_permissions"] != "":    
+                desired_permission=request.form["user_permissions"]
+                displayed_user.permission = desired_permission
+        else:
+            if request.form["inputPassword"] != "":
+                desired_password=generate_password_hash(request.form["inputPassword"])
+                displayed_user.password_hash = desired_password
+        db.session.commit()
+        if current_user.user_role() == 'admin':
+            return redirect(url_for("get_users_list"))
+        else:
+            return redirect(url_for("index"))
+        
 
 @app.route("/users/", methods=["GET", "POST"])
 @login_required
