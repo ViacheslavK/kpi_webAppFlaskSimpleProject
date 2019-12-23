@@ -2,7 +2,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-    <h1>{% block title %} - {% if displayed_company != None %}{displayed_company.company_name}{% else %}Add new company{% endif %}{% endblock %}</h1>
+    <h1>{% block title %} - {% if displayed_company != None %}{{displayed_company.company_name}}{% else %}Add new company{% endif %}{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
