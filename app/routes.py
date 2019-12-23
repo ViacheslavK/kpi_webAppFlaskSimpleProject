@@ -115,7 +115,12 @@ def dev_company(company_name):
         updated_company_description=request.form["company_description"]
         check_company_name = CompanyProfile.query.filter_by(company_name=updated_company_name).first()
         if check_company_name != None:
-            pass # Handle company_already_exists error
+            if check_company_name.id == updated_company.id:
+                updated_company.company_description = updated_company_description
+                db.session.commit()
+                return redirect(url_for('dev_companies'))
+            else:
+                return redirect(url_for('dev_company', company_name=updated_company.company_name, alert="CompanyExist"))
         elif updated_company_name != None and updated_company_description != None:
             updated_company.company_name = updated_company_name
             updated_company.company_description = updated_company_description
