@@ -17,6 +17,10 @@
     margin-top: 5px;
 }
 
+.footer-saver {
+    margin-bottom: 5px;
+}
+
 .action-form-location {
     margin: auto;
     width: 90%;
@@ -25,4 +29,8 @@
 textarea.non-resize {
     resize: none;
     margin-top: 5px;
+}
+
+.posted-info {
+    margin-right: 15px;
 }

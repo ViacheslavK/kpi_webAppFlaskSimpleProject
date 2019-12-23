@@ -22,9 +22,9 @@
                 {{ job.company.company_name }}
             </small>
         <div>
-            {% if current_user.is_authenticatedand current_user.user_role() in ['admin'] %}
+            {% if current_user.is_authenticated and current_user.user_role() in ['admin'] %}
             <small>
-                <a class="btn btn-info btn-sm" href="{{ url_for('send_cv(job.id)') }}">Edit job</a>
+                <a class="btn btn-info btn-sm" href="{{ url_for('send_cv', job_id=job.id) }}">Edit job</a>
                 <input type="submit" class="btn btn-info btn-sm" value="Delete job">
                 <input type="submit" class="btn btn-danger btn-sm" value="Reactivate job">
             </small>
