@@ -1,4 +1,5 @@
 # from https://www.youtube.com/watch?v=79KGri12tgk
+# same functionality as from https://crontab.guru/
 import schedule
 import time
 
